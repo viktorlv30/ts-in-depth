@@ -1,3 +1,5 @@
+import { timeout } from '../decorators';
+
 // Task 11
 abstract class ReferenceItem {
 
@@ -26,6 +28,7 @@ abstract class ReferenceItem {
         console.log(`'Creating a new ReferenceItem...`);
     }
 
+    @timeout(1500)
     public printItem(): void {
         console.log(`${this.title} was published in ${this.year} in department '${ReferenceItem.department}'.`);
     }

@@ -1,7 +1,8 @@
 import { Category } from './NamespaceDemo/enums';
 import { ILibrarian, IAuthor, ILogger, IBook, IMagazine } from './NamespaceDemo/interfaces';
 import { UniversityLibrarian, ReferenceItem, RefBook, Shelf } from './NamespaceDemo/classes';
-import { purge } from './lib/utility-function';
+import { purge, getBooksByCategory, logCategorySearch, logFirstAvailable, getAllBooks, getBookTitlesByCategory, logBookTitles, getBookById, createCustomerId, createCustomer, checkoutBooks, getTitles, printBook, getBooksByCategoryPromise, logSearchResults } from './lib/utility-function';
+import Encyclopedia from './NamespaceDemo/classes/encyclopedia';
 
 showHello('greeting', 'TypeScript');
 
@@ -22,121 +23,6 @@ function showHello(divName: string, name: string) {
 
 
 
-
-function getAllBooks(): IBook[] {
-    let books: IBook[] = [
-        {
-            id: 1,
-            title: 'Refactoring JavaScript',
-            author: 'Evan Burchard',
-            available: true,
-            category: Category.JavaScript
-        },
-        {
-            id: 2,
-            title: 'JavaScript Testing',
-            author: 'Liang Yuxian Eugene',
-            available: false,
-            category: Category.JavaScript
-        },
-        {
-            id: 3,
-            title: 'CSS Secrets',
-            author: 'Lea Verou',
-            available: true,
-            category: Category.CSS
-        },
-        {
-            id: 4,
-            title: 'Mastering JavaScript Object-Oriented Programming',
-            author: 'Andrea Chiarelli',
-            available: true,
-            category: Category.JavaScript
-        }
-    ];
-    return books;
-}
-
-function logFirstAvailable(books: IBook[] = getAllBooks()): void {
-    const numBooks: number = books.length;
-    let title: string = '';
-    for (const book of books) {
-        if (book.available) {
-            title = book.title;
-            break;
-        }
-    }
-    console.log(`Books count ${numBooks}.`);
-    console.log(`First available book is ${title}.`);
-}
-
-function getBookTitlesByCategory(category: Category = Category.JavaScript): string[] {
-    const books = getAllBooks();
-    const titles = books
-        .filter(book => book.category === category)
-        .map(book => book.title);
-    return titles;
-}
-
-function logBookTitles(titles: string[]): void {
-    for (const title of titles) {
-        console.log(title);
-    }
-}
-
-function getBookById(id: number): IBook {
-    const books = getAllBooks();
-    return books.find(book => book.id === id);
-}
-
-function createCustomerId(name: string, id: number): string {
-    return `${name}${id}`;
-}
-
-function createCustomer(name: string, age?: number, city?: string): void {
-    console.log(`Customer Name:`, name);
-    if (age) {
-        console.log(`Customer Age:`, age);
-    }
-    if (city) {
-        console.log(`Customer City:`, city);
-    }
-}
-
-function getBooksAsync(): Promise<IBook[]> {
-    return new Promise((res, rej) => {
-        const books = getAllBooks();
-        setTimeout(() => res(books), 3000);
-    });
-}
-
-function checkoutBooks(customer: string, ...bookIDs: number[]): string[] {
-    console.log(`Customer ${customer}`);
-    const books = bookIDs.map((id: number): IBook => getBookById(id));
-    const availableBooks = books.filter(book => book.available);
-    const titles = availableBooks.map(book => book.title);
-    return titles;
-}
-
-function getTitles(author: string): string[];
-function getTitles(available: boolean): string[];
-function getTitles(property: string | boolean): string[] {
-    const books = getAllBooks();
-    if (typeof property === 'boolean') {
-        return books
-            .filter(book => book.available === property)
-            .map(book => book.title);
-    }
-    if (typeof property === 'string') {
-        return books
-            .filter(book => book.author === property)
-            .map(book => book.title);
-    }
-}
-
-function printBook(book: IBook): void {
-    console.log(`${book.title} by ${book.author}`);
-}
 
 const myBook: IBook = {
     id: 5,
@@ -275,3 +161,77 @@ console.log('fLibrarian', fLibrarian);
 (<any>fLibrarian).printLibrarian();
 
 // Task 23
+const library = new UniversityLibrarian('hello@world.com');
+
+library.assistFaculty = () => console.log(`New assist faculty`);
+
+library.assistFaculty();
+try {
+    library.teachCommunity = () => console.log(`New teach community`);
+    library.teachCommunity();
+} catch (error) {
+    console.warn(error.message);
+}
+
+// Task 24
+const enc = new Encyclopedia('Big SSSR', 1965, 20);
+// console.log(`enc`, enc);
+enc.printItem();
+
+// Task 28. Callback Functions
+// console.log(`Begin`);
+// getBooksByCategory(Category.Software, logCategorySearch);
+// console.log(`End`);
+
+// Task 29. Promises
+// console.log(`Begin promise`);
+// getBooksByCategoryPromise(Category.JavaScript)
+//     .then(titles => logCategorySearch(null, titles))
+//     .catch(err => logCategorySearch(err, null))
+// console.log(`End promise`);
+
+// Task 30. Async Functions
+console.log('Beginning search...');
+logSearchResults(Category.JavaScript)
+    .catch(reason => console.log(reason));
+console.log('Search submitted...');
+
+
+// Task 31
+// Personal
+
+function enumerable(isEnumerable: boolean) {
+    return function (target: any, methodName: string, descriptor: PropertyDescriptor) {
+        descriptor.enumerable = isEnumerable;
+    }
+}
+
+class MyClass {
+
+    private _age: number;
+    private _name: string;
+    private _address: string;
+
+
+
+    @enumerable(false)
+    public get age() {
+        return this._age || 0;
+    }
+
+    @enumerable(true)
+    public get name() {
+        return this._name || 'No name';
+    }
+
+    @enumerable(true)
+    public get address() {
+        return this._address || 'No address';
+    }
+}
+
+const myClass = new MyClass();
+for (let prop in myClass) {
+    console.log(`Enumerable property`, prop);
+}
+

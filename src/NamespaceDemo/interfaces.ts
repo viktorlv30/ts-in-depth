@@ -38,4 +38,8 @@ interface IShelfItem {
     title: string;
 }
 
-export { IBook, IDamageLogger, IAuthor, ILibrarian, IMagazine, IShelfItem, IDamageLogger as ILogger };
+interface LibMgrCallback {
+    (err: Error, titles: string[]): void;
+}
+
+export { IBook, IDamageLogger, IAuthor, ILibrarian, IMagazine, IShelfItem, IDamageLogger as ILogger, LibMgrCallback };

@@ -1,5 +1,5 @@
 import * as Interfaces from '../interfaces';
-import { sealed, logger } from '../decorators';
+import { sealed, logger, writable } from '../decorators';
 
 // Task 21
 @sealed('UniversityLibrarian')
@@ -14,6 +14,16 @@ class UniversityLibrarian implements Interfaces.ILibrarian {
 
     public assistCustomer(custName: string): void {
         console.log(`${this.name} is assisting to ${custName}`);
+    }
+
+    @writable(true)
+    public assistFaculty() {
+        console.log(`Assisting faculty`);
+    }
+
+    @writable(false)
+    public teachCommunity() {
+        console.log(`Teaching community`);
     }
 }
 
